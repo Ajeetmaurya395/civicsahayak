@@ -1,0 +1,119 @@
+// Cedar Schema for CivicOS
+
+namespace CivicOS {
+  entity User in [Role] = {
+    "name": String,
+    "state": String,
+  };
+
+  entity Agent = {
+    "name": String,
+  };
+
+  entity Role;
+
+  entity Resource = {
+    "owner": User,
+    "type": String,
+  };
+
+  entity Scheme = {
+    "name": String,
+    "state": String,
+  };
+
+  action "viewOwnProfile" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "editOwnProfile" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "saveScheme" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "viewSavedSchemes" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "searchSchemes" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "checkEligibility" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "uploadDocument" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "viewOtherProfile" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "adminAction" appliesTo {
+    principal: [User],
+    resource: [Resource],
+  };
+
+  action "search_government_web" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "fetch_government_page" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "extract_scheme" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "read_opensearch" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "write_opensearch" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "extract_profile" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "process_document" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "read_eligibility" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "generate_recommendations" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+
+  action "delegate" appliesTo {
+    principal: [Agent],
+    resource: [Resource],
+  };
+}
