@@ -1,0 +1,75 @@
+# CivicOS — EKS Anywhere Cluster Configuration
+# For on-premises / air-gapped government deployment
+# Full data sovereignty — nothing leaves the building
+
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: Cluster
+metadata:
+  name: civicos-cluster
+  namespace: default
+spec:
+  clusterNetwork:
+    cniConfig:
+      cilium: {}
+    pods:
+      cidrBlocks:
+        - 192.168.0.0/16
+    services:
+      cidrBlocks:
+        - 10.96.0.0/12
+  controlPlaneConfiguration:
+    count: 1
+    endpoint:
+      host: "civicos-cp.local"
+    machineGroupRef:
+      kind: DockerMachineConfig
+      name: civicos-cp
+  datacenterRef:
+    kind: DockerDatacenterConfig
+    name: civicos-datacenter
+  externalEtcdConfiguration:
+    count: 1
+    machineGroupRef:
+      kind: DockerMachineConfig
+      name: civicos-etcd
+  kubernetesVersion: "1.28"
+  managementCluster:
+    name: civicos-cluster
+  workerNodeGroupConfigurations:
+    - count: 2
+      machineGroupRef:
+        kind: DockerMachineConfig
+        name: civicos-worker
+      name: civicos-workers
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: DockerDatacenterConfig
+metadata:
+  name: civicos-datacenter
+  namespace: default
+spec: {}
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: DockerMachineConfig
+metadata:
+  name: civicos-cp
+  namespace: default
+spec: {}
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: DockerMachineConfig
+metadata:
+  name: civicos-worker
+  namespace: default
+spec: {}
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: DockerMachineConfig
+metadata:
+  name: civicos-etcd
+  namespace: default
+spec: {}

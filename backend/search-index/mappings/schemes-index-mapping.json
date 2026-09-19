@@ -1,0 +1,52 @@
+{
+  "mappings": {
+    "properties": {
+      "scheme_name": { "type": "text", "analyzer": "standard" },
+      "description": { "type": "text", "analyzer": "standard" },
+      "benefits": { "type": "text" },
+      "department": { "type": "keyword" },
+      "government_level": { "type": "keyword" },
+      "sector": { "type": "keyword" },
+      "state": { "type": "keyword" },
+      "source_url": { "type": "keyword" },
+      "official_application_url": { "type": "keyword" },
+      "source_verified": { "type": "boolean" },
+      "retrieved_at": { "type": "date" },
+      "expires_at": { "type": "date" },
+      "required_documents": { "type": "keyword" },
+      "how_to_apply": { "type": "text" },
+      "eligibility": {
+        "properties": {
+          "age_min": { "type": "integer" },
+          "age_max": { "type": "integer" },
+          "income_max": { "type": "long" },
+          "income_min": { "type": "long" },
+          "states": { "type": "keyword" },
+          "occupations": { "type": "keyword" },
+          "categories": { "type": "keyword" },
+          "genders": { "type": "keyword" },
+          "education_levels": { "type": "keyword" },
+          "is_bpl_required": { "type": "boolean" },
+          "is_farmer_required": { "type": "boolean" },
+          "disability_required": { "type": "boolean" }
+        }
+      },
+      "embedding": {
+        "type": "knn_vector",
+        "dimension": 384,
+        "method": {
+          "name": "hnsw",
+          "space_type": "cosinesimil",
+          "engine": "lucene"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "knn": true,
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    }
+  }
+}

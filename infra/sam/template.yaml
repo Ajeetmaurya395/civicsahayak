@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: CivicOS Serverless Infrastructure - SAM + LocalStack
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.12
+    MemorySize: 256
+
+Resources:
+  # S3 bucket for document uploads
+  DocumentUploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: civicos-document-uploads
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT, POST]
+            AllowedOrigins: ['*']
+
+  # SQS queue for document processing
+  DocumentProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: civicos-document-processing
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 86400
+
+  # Dead letter queue for failed processing
+  DocumentProcessingDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: civicos-document-processing-dlq
+      MessageRetentionPeriod: 604800
+
+  # Lambda: Generate application checklist from eligibility results
+  GenerateChecklistFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: civicos-generate-checklist
+      Handler: app.handler
+      CodeUri: functions/generate_checklist/
+      Description: Generates application checklist from eligibility results
+      Events:
+        FromQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DocumentProcessingQueue.Arn
+            BatchSize: 1
+
+  # Lambda: Process document upload notification
+  ProcessUploadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: civicos-process-upload
+      Handler: app.handler
+      CodeUri: functions/process_upload/
+      Description: Handles document upload notifications
+      Events:
+        S3Upload:
+          Type: S3
+          Properties:
+            Bucket: !Ref DocumentUploadsBucket
+            Events: s3:ObjectCreated:*
+
+Outputs:
+  DocumentUploadsBucketName:
+    Description: Name of the S3 bucket for document uploads
+    Value: !Ref DocumentUploadsBucket
+
+  DocumentProcessingQueueUrl:
+    Description: URL of the SQS document processing queue
+    Value: !Ref DocumentProcessingQueue
+
+  GenerateChecklistFunctionArn:
+    Description: ARN of the checklist generation Lambda
+    Value: !GetAtt GenerateChecklistFunction.Arn
